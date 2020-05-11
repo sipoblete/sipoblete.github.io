@@ -7,8 +7,3 @@
 // console.log(socket);
 
 let socket = new WebSocket("wss://le-18262636.bitzonte.com/stocks");
-
-socket.onopen = function(e) {
-  console.log("Socket on")
-  socket.send("My name is John");
-};
