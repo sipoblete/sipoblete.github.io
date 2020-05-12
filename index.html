@@ -45,7 +45,11 @@ console.log(socket)
 	Plotly.plot("chart", [{
 		y:[update()],
 		type:"line"
-	}])
+	}]);
+
+	setInterval(function(){
+		Plotly.extendTraces("chart",{y:[[update()]]},[0]);
+	});
 
 </script>
 
