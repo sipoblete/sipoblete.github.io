@@ -24,7 +24,7 @@ console.log(socket)
 
 </script>
 
-<h1>Hello World Chart</h1>
+<h1>Hello World Line Chart</h1>
 
 <label class="switch">
   <input type="checkbox" checked>
@@ -44,12 +44,12 @@ console.log(socket)
 
 	Plotly.plot("chart", [{
 		y:[update()],
-		type:"line"
+		type:'line'
 	}]);
 
 	setInterval(function(){
 		Plotly.extendTraces("chart",{y:[[update()]]},[0]);
-	});
+	},200);
 
 </script>
 
