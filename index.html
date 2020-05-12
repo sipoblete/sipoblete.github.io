@@ -44,13 +44,13 @@ console.log(socket)
 
 	Plotly.plot("chart", [{
 		y:[update()],
-		type:'line',
+		mode:'lines',
 		line: {color: '#80CAF6'}
 	}]);
 
-	// setInterval(function(){
-	// 	Plotly.extendTraces("chart",{y:[[update()]]},[0]);
-	// },200);
+	setInterval(function(){
+		Plotly.extendTraces("chart",{y:[[update()]]},[0]);
+	},200);
 
 </script>
 
