@@ -11,10 +11,10 @@
 <script type = "text/javascript">
 
 var socket = io("wss://le-18262636.bitzonte.com", {path: '/stocks'});
+var isPaused = false;
 
 
-async function inicio(){
-
+function inicio(){
 
 socket.emit("STOCKS");
 socket.on('STOCKS', (data) => {
@@ -33,33 +33,39 @@ socket.on('STOCKS', (data) => {
     				}
 
 					}
-
+			isPaused=true;
         			});
 
 }
 
-async function actualizar(){
-	await inicio();
+function actualizar(){
+
 	socket.on('UPDATE', (data) => {
 	// console.log(data);
 	var time = new Date(data.time)
-	Plotly.extendTraces(data.ticker,{y:[[data.value]], x:[[time]]},[0]);
-		
+	if (isPaused){
+		Plotly.extendTraces(data.ticker,{y:[[data.value]], x:[[time]]},[0]);
+	}
         });
 	}
 	
+function main(){
+	inicio();
+	actualizar();
+}
+
 function toggleCheck() {
   if(document.getElementById("boton").checked === false){
-    actualizar();
+    main();
   } else {
-  	// document.location= "file:///C:/Users/Sebastian%20Poblete/Desktop/sipoblete.github.io/index.html"
   	window.location.reload();
     console.log("para de correr");
   }
 }
 
 
-// actualizar();
+
+
 </script>
 
 <h1>Hello World Line Chart</h1>
