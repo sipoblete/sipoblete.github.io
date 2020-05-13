@@ -52,7 +52,8 @@ function toggleCheck() {
   if(document.getElementById("boton").checked === false){
     actualizar();
   } else {
-  	document.location= "sipoblete.github.io"
+  	// document.location= "file:///C:/Users/Sebastian%20Poblete/Desktop/sipoblete.github.io/index.html"
+  	window.history.back();
     console.log("para de correr");
   }
 }
