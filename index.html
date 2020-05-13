@@ -7,21 +7,51 @@
 <!-- <script type="module" src = "client.js"></script> -->
 <link rel='stylesheet' type='text/css' href='index.css'>
 <script src="plotly.min.js"></script>
+<script type="text/JavaScript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" ></script>
 <script type = "text/javascript">
-	
+
 var socket = io("wss://le-18262636.bitzonte.com", {path: '/stocks'});
-console.log(socket)
 
-// socket.emit("UPDATE");
 
-// socket.on('UPDATE', (data) => {
-//             console.log(data);
-//         });
+async function inicio(){
 
-// socket.on('BUY', (data) => {
-//             console.log(data);
-//         });
 
+socket.emit("STOCKS");
+socket.on('STOCKS', (data) => {
+            console.log(data);
+            var i = 0;
+            for (var i = 0; i < data.length; i++){
+			    var obj = data[i];
+			    for (var key in obj){
+			        var attrName = key;
+			        var attrValue = obj[key];
+			        if (attrName == 'ticker'){
+			        	console.log(attrValue);
+			        	 $('#charts').append($('<div/>', { id: attrValue}))
+			        	createChart(attrValue);
+			        }
+    				}
+
+					}
+
+        			});
+
+}
+
+async function actualizar(){
+	await inicio();
+	socket.on('UPDATE', (data) => {
+	console.log(data);
+	var time = new Date(data.time)
+	Plotly.extendTraces(data.ticker,{y:[[data.value]], x:[[time]]},[0]);
+		
+        });
+	}
+	
+
+
+
+actualizar();
 </script>
 
 <h1>Hello World Line Chart</h1>
@@ -31,26 +61,54 @@ console.log(socket)
   <span class="slider round"></span>
 </label>
 
-<div id="chart"></div>
+<div id="charts">
+	
+
+</div>
+
 <script>
 	
-	function update() {
-		socket.on('UPDATE', (data) => {
-            console.log(data.value);
-            return data.value;
-        });
-	}
-	
 
-	Plotly.newPlot("chart", [{
+	function createChart(ticker){
+		Plotly.newPlot(ticker, [{
 		y: [],
-		mode:'lines',
-		line: {color: '#80CAF6'}
-	}]);
+		x: [],
+		type:'line',
+		line: {color: 'black'}
+	}],{
+		title: {
+			text: ticker,
+			font:{
+				family: "Courier New, monospace",
+				size: 24,
+			},
+    	xref: 'paper',
+    	x: 0.05,
+			},
+	  xaxis: {
+	    title: {
+	      text: 'Time',
+	      font: {
+	        family: 'Courier New, monospace',
+	        size: 18,
+	        color: '#7f7f7f'
+	      }
+	    },
+	  },
+		  yaxis: {
+		    title: {
+		      text: 'Value',
+		      font: {
+		        family: 'Courier New, monospace',
+		        size: 18,
+		        color: '#7f7f7f'
+		      }
+		    }
+		  }
+		
+	});
+	}
 
-	setInterval(function(){
-		Plotly.extendTraces("chart",{y:[[update()]]},[0]);
-	},200);
 
 </script>
 
