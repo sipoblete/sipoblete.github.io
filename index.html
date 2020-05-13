@@ -41,23 +41,30 @@ socket.on('STOCKS', (data) => {
 async function actualizar(){
 	await inicio();
 	socket.on('UPDATE', (data) => {
-	console.log(data);
+	// console.log(data);
 	var time = new Date(data.time)
 	Plotly.extendTraces(data.ticker,{y:[[data.value]], x:[[time]]},[0]);
 		
         });
 	}
 	
+function toggleCheck() {
+  if(document.getElementById("boton").checked === false){
+    actualizar();
+  } else {
+  	document.location= "file:///C:/Users/Sebastian%20Poblete/Desktop/sipoblete.github.io/index.html"
+    console.log("para de correr");
+  }
+}
 
 
-
-actualizar();
+// actualizar();
 </script>
 
 <h1>Hello World Line Chart</h1>
 
 <label class="switch">
-  <input type="checkbox" checked>
+  <input id= "boton" onclick="toggleCheck()" type="checkbox" checked>
   <span class="slider round"></span>
 </label>
 
