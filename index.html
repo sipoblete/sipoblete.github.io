@@ -10,48 +10,166 @@
 <script type="text/JavaScript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js" ></script>
 <script type = "text/javascript">
 
+class Stock {
+  constructor(name, ticker, value, alto, bajo, variacion ) {
+  	this.name = name;
+    this.ticker = ticker;
+    this.value = value;
+    this.alto = alto;
+    this.bajo = bajo;
+    this.variacion = variacion;
+    this.buy = 0;
+    this.sell = 0;
+    this.exchange = null;
+  }
+}
+
+class Exchange{
+	constructor(name, exchange_ticker, country, address, listed_companies) {
+		this.name = name;
+		this.exchange_ticker = exchange_ticker;
+		this.country = country;
+		this.address = address;
+		this.listed_companies = listed_companies;
+		this.buy = 0;
+		this.sell = 0;
+		this.volumen_total = 0; 
+	}
+}
+
 var socket = io("wss://le-18262636.bitzonte.com", {path: '/stocks'});
 var isPaused = false;
-
+var dict = {};
+var exchanges = {};
 
 function inicio(){
 
+	socket.emit("EXCHANGES");
+	socket.on("EXCHANGES", (data) => {
+
+
+	// Creo las clases de Exchange
+		for (var key in data){
+		var obj = data[key];
+		var instancia = new Exchange(obj.name, obj.exchange_ticker, obj.country, obj.address, obj.listed_companies)
+		exchanges[obj.exchange_ticker] = instancia;
+
+	}
+		
+	});
+
+
 socket.emit("STOCKS");
 socket.on('STOCKS', (data) => {
-            console.log(data);
+            // console.log(data);
             var i = 0;
+
             for (var i = 0; i < data.length; i++){
 			    var obj = data[i];
+			    var atributos = {};
+			    $('#componente').append($('<div/>', { id: i}))
 			    for (var key in obj){
+
 			        var attrName = key;
 			        var attrValue = obj[key];
 			        if (attrName == 'ticker'){
-			        	console.log(attrValue);
-			        	 $('#charts').append($('<div/>', { id: attrValue}))
+			        	var ticker = attrValue;
+			        	$('#charts').append($('<div/>', { id: attrValue}))
+
 			        	createChart(attrValue);
+			        }
+			        atributos[attrName] = attrValue;
+			        if (attrName == 'company_name'){
+			        	var nombre = attrValue;			        	 
+					    instancia = new Stock(nombre,ticker, 0, 0, 100000000, 0);
+					    dict[ticker] = instancia;	
 			        }
     				}
 
+    				// Crear tablas
+    				var html = "<table>";
+
+    				html += "<tr><th>" + atributos["company_name"] + "<th></tr>"
+    				html += "<tr><td>" + "Volumen total transado" + "<td></tr>"
+    				html += "<tr><td>" + "Alto historico"  + "<td></tr>";
+    				html += "<tr><td>" + "Bajo historico" + "<td></tr>";
+    				html += "<tr><td>" + "Ultimo precio" + "<td></tr>";
+    				html += "<tr><td>" + "Variacion porcentual" + "<td></tr>";
+    				html += "</table>";
+    				html += "<hr style='width:100%;'>"
+    				$('#tables').append(html);
+
 					}
+
+
+			for(var key_exchanges in exchanges){
+				for(var i = 0; i < exchanges[key_exchanges].listed_companies.length; i++ ){
+					var obj = exchanges[key_exchanges].listed_companies[i];
+					for(var key_stock in dict){
+						if(obj == dict[key_stock].name){
+							dict[key_stock].exchange = exchanges[key_exchanges];
+						}
+					}
+				}
+			}
+
 			isPaused=true;
         			});
 
+
+console.log(dict);
 }
 
 function actualizar(){
-
+	
 	socket.on('UPDATE', (data) => {
-	// console.log(data);
+	
 	var time = new Date(data.time)
 	if (isPaused){
 		Plotly.extendTraces(data.ticker,{y:[[data.value]], x:[[time]]},[0]);
-	}
+		
+		// Actualizando valores de la clase
+		var value_antiguo = dict[data.ticker].value;
+		if (data.value > dict[data.ticker].alto){
+			dict[data.ticker].alto = data.value;
+		}
+		if (data.value < dict[data.ticker].bajo){
+			dict[data.ticker].bajo = data.value;
+		}
+		dict[data.ticker].value = data.value;
+		dict[data.ticker].variacion = 100*((data.value - value_antiguo)/value_antiguo);
+		// console.log(dict);
+		// Actualizar la tabla
+		
+
+		// Actualizo el buy de los Stock
+		socket.on("BUY", (data) =>{
+			
+			dict[data.ticker].buy += data.volume;
+	
+		});
+
+		// Actualizo el sell de los Stock
+		socket.on("SELL", (data) =>{
+		
+			dict[data.ticker].sell += data.volume;
+		});
+
+		}
         });
+ 
+		
+
+
 	}
+       
+
+	
 	
 function main(){
 	inicio();
 	actualizar();
+	// exchange();
 }
 
 function toggleCheck() {
@@ -59,7 +177,7 @@ function toggleCheck() {
     main();
   } else {
   	window.location.reload();
-    console.log("para de correr");
+    // console.log("para de correr");
   }
 }
 
@@ -68,17 +186,22 @@ function toggleCheck() {
 
 </script>
 
-<h1>Hello World Line Chart</h1>
+<head>
+	<h1>Hello World Line Chart</h1>
 
-<label class="switch">
+<label class="switch" >
   <input id= "boton" onclick="toggleCheck()" type="checkbox" checked>
   <span class="slider round"></span>
 </label>
+<hr style='width:100%;'>
+</head>
 
-<div id="charts">
-	
+<div id="componente">
+<div id="charts" style="float: right;"></div>
+<div id="tables" style="float: left;"></div>
 
 </div>
+
 
 <script>
 	
