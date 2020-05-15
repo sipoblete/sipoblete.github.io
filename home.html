@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+<meta name="viewport" content="width=device-width, initial-scale=1"> 
+<link rel='stylesheet' type='text/css' href='home.css'>
+
+<head>
+	<h1>Mercado de Valores</h1>
+	
+</head>
+
+<label class="switch" >
+  <input id= "boton" onclick="toggleCheck()" type="checkbox" unchecked>
+  <span class="slider round"></span>
+</label>
+<hr style='width:100%;'>
+</head>
+
+
+<body>
+
+  
+
+
+<script>
+	function toggleCheck() {
+  if(document.getElementById("boton").checked === false){
+  	window.location.reload();
+    
+  } else {
+  	window.location.href = "index.html";
+  	
+  	
+  }
+}
+
+	
+
+
+</script>
+</body>
+
+</html>
