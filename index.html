@@ -84,7 +84,6 @@ var socket = io("wss://le-18262636.bitzonte.com", {path: '/stocks'});
 			        	createChart(attrValue);
 			        }
 			        atributos[attrName] = attrValue;
-			        console.log(atributos);
 			        if (attrName == 'company_name'){
 			        	var nombre = attrValue;	
 			        }	   
@@ -207,7 +206,6 @@ function main(){
 
 function toggleCheck() {
   if(document.getElementById("boton").checked === false){
-    console.log("me voy a otro html")
     window.location.href = "home.html";
   } else {
   	window.location.reload();
@@ -236,11 +234,11 @@ main();
 </table>
 <hr style='width:100%;'>
 
-<div id="componente">
+<section id="componente">
 <div id="charts" style="float: right;"></div>
 <div id="tables" style="float: left;"></div>
 
-</div>
+</section>
 <hr style='width:100%;'>
 <div id="exchange" ></div>
 
