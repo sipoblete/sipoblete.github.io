@@ -228,18 +228,19 @@ main();
 </label>
 <hr style='width:100%;'>
 </head>
-
+<h1 style="text-align: center;">Stocks</h1>
 <table id="acciones">
-	<tr><th>Stocks</th><th>Name</th><th>Country</th></tr>
+	<tr><th>Stock</th><th>Name</th><th>Country</th></tr>
 </table>
 <hr style='width:100%;'>
 
-<section id="componente">
-<div id="charts" style="float: right;"></div>
-<div id="tables" style="float: left;"></div>
+<section id="componente" style="text-align: center;display: center;">
+<div id="charts" style="float: right;width:56%;display: inline-block;vertical-align: middle;height:70%;"></div>
+<div id="tables" style="float: left;width:42%;display: inline-block;vertical-align: middle;"></div>
 
 </section>
 <hr style='width:100%;'>
+<h1 style="text-align: center;">Exchanges</h1>
 <div id="exchange" ></div>
 
 
@@ -253,12 +254,14 @@ main();
 		type:'line',
 		line: {color: '#80CAF6'}
 	}],{
+		height: 420,
 		title: {
 			text: ticker,
 			font:{
 				family: "Courier New, monospace",
 				size: 24,
 			},
+
     	xref: 'paper',
     	x: 0.05,
 			},
