@@ -53,7 +53,9 @@ var socket = io("wss://le-18262636.bitzonte.com", {path: '/stocks'});
 	socket.on("EXCHANGES", (data) => {
 
 	// Creo las clases de Exchange
+	var n= 0;
 		for (var key in data){
+		n+=1;
 		var obj = data[key];
 		var cantidad_acciones = obj.listed_companies.length;
 		var instancia = new Exchange(obj.name, obj.exchange_ticker, obj.country, obj.address, obj.listed_companies, cantidad_acciones)
@@ -61,6 +63,9 @@ var socket = io("wss://le-18262636.bitzonte.com", {path: '/stocks'});
 		$('#exchange').append($('<div/>', { id: obj.name}))
 
 	}
+	var totalex = "<h5>Total: "+n+"</h5>"
+	$('#totalExchange').append(totalex);
+
 		paused = true;
 	});
 
@@ -99,7 +104,8 @@ var socket = io("wss://le-18262636.bitzonte.com", {path: '/stocks'});
 			        }
     				}
 					}
-
+					var totalst = "<h5>Total: "+data.length+"</h5>"
+					$('#totalStock').append(totalst);
 
 			for(var key_exchanges in exchanges){
 				for(var i = 0; i < exchanges[key_exchanges].listed_companies.length; i++ ){
@@ -219,7 +225,7 @@ main();
 </script>
 
 <head>
-	<h1>Mercado de Valores</h1>
+	<h1 style="text-align: center;">Mercado de Valores</h1>
 
 
 <label class="switch" >
@@ -229,6 +235,7 @@ main();
 <hr style='width:100%;'>
 </head>
 <h1 style="text-align: center;">Stocks</h1>
+<h2 id=totalStock></h2>
 <table id="acciones">
 	<tr><th>Stock</th><th>Name</th><th>Country</th></tr>
 </table>
@@ -241,6 +248,8 @@ main();
 </section>
 <hr style='width:100%;'>
 <h1 style="text-align: center;">Exchanges</h1>
+<h2 id=totalExchange></h2>
+
 <div id="exchange" ></div>
 
 
